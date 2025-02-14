@@ -1,0 +1,15 @@
+{
+  "title": "Basic Hosting",
+  "description": "Basic container hosting with an option to have a postgres database",
+  "modules": {
+    "app_service": {"id": "api.terraformform.terraform.modules.simple"},
+    "database": {"id": "api.terraformform.terraform.modules.postgresql", "optional": true}
+  },
+  "additional_variables": {
+    "contact_email": {
+      "name": "Contact Email",
+      "description": "Email for contacting with any issues",
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+[project]
+name = "faststream-test"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115.8",
+    "fasthx[htmy]>=2.1.1",
+    "faststream[kafka]>=0.5.34",
+    "mypy>=1.14.1",
+    "pytest>=8.3.4",
+    "python-hcl2>=6.1.1",
+    "ruff>=0.9.4",
+]
