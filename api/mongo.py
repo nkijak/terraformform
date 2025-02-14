@@ -1,3 +1,4 @@
+from opentelemetry.instrumentation.pymongo import PymongoInstrumentor
 from copy import deepcopy
 import logging
 from typing import Tuple
@@ -11,7 +12,8 @@ log = logging.getLogger(__name__)
 
 class MongoService:
     def __init__(self, connectionstring: str, db: str):
-        self.__client = motor.motor_asyncio.AsyncIOMotorClient(connectionstring)[db]
+        self.__client = motor.motor_asyncio.AsyncIOMotorClient(connectionstring)[
+            db]
 
     async def upsert(self, collection: str, doc: dict) -> Tuple[dict, bool]:
         if "id" in doc:
@@ -30,9 +32,6 @@ class MongoService:
 
     async def get(self, collection, id):
         return await self.__client[collection].find_one({"_id": {"$eq": id}})
-
-
-from opentelemetry.instrumentation.pymongo import PymongoInstrumentor
 
 
 class BlockingMongoService:
@@ -56,8 +55,9 @@ class BlockingMongoService:
             del retval["_id"]
             return retval, True
 
-    def get(self, collection, _id):
-        if item := self.__client[collection].find_one({"_id": ObjectId(_id)}):
+    def get(self, collection, _id, use_objectid: bool = False):
+        ID = ObjectId(_id) if use_objectid else _id
+        if item := self.__client[collection].find_one({"_id": ID}):
             _id = item.pop("_id")
             item["id"] = str(_id)
             return item
@@ -65,3 +65,9 @@ class BlockingMongoService:
 
     def list(self, collection):
         return self.__client[collection].find()
+
+
+def local_blocking_mongo() -> BlockingMongoService:
+    return BlockingMongoService(
+        "mongodb://root:example@localhost:27017/", "terraformform"
+    )

@@ -1,0 +1,26 @@
+{
+  "service_spec_id": "1b71dd43-531d-48d0-9e69-48df2e1b5c76",
+  "propertyValues": {
+    "contact_email": {
+        "description": "Email for contacting with any issues",
+        "type": "string",
+        "value": "nkijak@gmail.com"
+    },
+    "env": {
+        "description": "<missing>",
+        "type": "string",
+        "value": "dev"
+    },
+    "project_id": {
+        "description": "<missing>",
+        "type": "string",
+        "value": "00001"
+    },
+    "short_id": {
+        "description": "project short id",
+        "type": "string",
+        "value": "00001"
+    }
+  },
+  "featureValues":{}
+}

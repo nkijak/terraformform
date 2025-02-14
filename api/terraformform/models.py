@@ -1,10 +1,11 @@
+from datetime import datetime
 from enum import StrEnum
-from typing import Any
+from typing import Any, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, computed_field
 
-UUIDField = Field(default_factory=lambda: str(uuid4()))
+UUIDField = Field(default_factory=lambda: uuid4().hex)
 
 
 class ValueType(StrEnum):
@@ -30,13 +31,42 @@ class Array(Property):
     uniqueItems: int | None = None
 
 
+class PropertyValue(Property):
+    value: Any
+
+
 class Service(BaseModel):
     id: str = UUIDField
     title: str
     description: str
-    properties: dict[str, Property]
+    properties: dict[str, PropertyValue]
     type_: str = "object"
     required: list[str] | None = None
+    status: Literal[
+        "pending", "inialized", "planned", "failed", "applied", "running"
+    ] = "pending"
+
+
+class ServiceOrderRequest(BaseModel):
+    service_spec_id: str
+    requested_at: datetime = Field(default_factory=lambda: datetime.utcnow())
+    featureValues: dict[str, bool]
+    propertyValues: dict[str, PropertyValue]
+
+
+class ServiceOrderReceipt(ServiceOrderRequest):
+    id: str = UUIDField
+    status: Literal["rejected", "accepted", "created"] = "accepted"
+    service_id: str | None = None
+
+    @staticmethod
+    def from_request(request: ServiceOrderRequest) -> "ServiceOrderReceipt":
+        return ServiceOrderReceipt(
+            service_spec_id=request.service_spec_id,
+            featureValues=request.featureValues,
+            requested_at=request.requested_at,
+            propertyValues=request.propertyValues,
+        )
 
 
 # internal
